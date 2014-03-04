@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
 import spring4.domain.Person
 
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlElementWrapper
+import javax.xml.bind.annotation.XmlRootElement
+
 @Controller
 class SimpleController {
 
@@ -24,18 +30,33 @@ class SimpleController {
         additionService.add(params.numbers)
     }
 
-    @RequestMapping(value = "/savePerson", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/savePerson", consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE],
+            method = RequestMethod.POST, produces = [MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE])
     @ResponseBody
-    public Person savePerson(@RequestBody Map params) {
-        Person person = new Person(params)
+    public Person savePerson(@RequestBody Person person) {
         personService.save(person)
     }
 
     @RequestMapping(value = "/people", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List people() {
+    public List<Person> peopleInJson() {
         personService.list()
     }
 
+    @RequestMapping(value = "/people", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+    @ResponseBody
+    public People peopleInXml() {
+        new People(people: personService.list())
+    }
+
+}
+
+
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement(name = "people")
+class People {
+
+    @XmlElement(name = "person")
+    List<Person> people
 
 }
