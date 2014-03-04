@@ -17,10 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement
 @Controller
 class SimpleController {
 
-    @Autowired
     AdditionService additionService
-
-    @Autowired
     PersonService personService
 
     @RequestMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
